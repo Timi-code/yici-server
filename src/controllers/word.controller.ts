@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Param, Body, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Query } from '@nestjs/common';
 import { WordService } from '../services/word.service';
+import { WordParams } from '../dto/wordParams.dto';
 
 @Controller('api/word')
 export class WordController {
@@ -8,8 +9,11 @@ export class WordController {
   ) { }
 
   @Get()
-  getList(): any {
-    return this.wordService.findAll();
+  async getList(@Query() query: WordParams): Promise<any> {
+    const params = query ? query : {currentPage: 0, pageSize: 10};
+    const data = await this.wordService.findAll(params)
+    const result = {code: 200, data: data[0], currentPage: parseInt(query.currentPage), pageSize: parseInt(query.pageSize), total: data[1]}
+    return result;
   }
 
   @Post()
