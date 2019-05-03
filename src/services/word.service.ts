@@ -31,7 +31,13 @@ export class WordService {
    * @param params 查询参数
    */
   async findAll(params: any): Promise<[Word[], number]> {
-    const param: FindManyOptions<Word> = {skip: params.pageSize * params.currentPage, take: params.pageSize};
-    return await this.wordRepository.findAndCount(param);
+    // const param: FindManyOptions<Word> = {skip: params.pageSize * params.currentPage, take: params.pageSize};
+    return await this.wordRepository.createQueryBuilder('word')
+                                    .orderBy('word.word', params.sort)
+                                    .andWhere('word.word like :search', { search: `%${params.search || ''}%`})
+                                    .skip(params.pageSize * params.currentPage)
+                                    .take(params.pageSize)
+                                    .getManyAndCount();
+    // return await this.wordRepository.findAndCount(param);
   }
 }

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Put, Query } from '@nestjs/common';
 import { WordService } from '../services/word.service';
-import { WordParams } from '../dto/wordParams.dto';
+import { ListDto } from '../dto/index';
 
 @Controller('api/word')
 export class WordController {
@@ -9,10 +9,17 @@ export class WordController {
   ) { }
 
   @Get()
-  async getList(@Query() query: WordParams): Promise<any> {
-    const params = query ? query : {currentPage: 0, pageSize: 10};
+  async getList(@Query() query: any): Promise<any> {
+    const params = {
+      currentPage: parseInt(query.currentPage),
+      pageSize: parseInt(query.pageSize),
+      search: query.search
+    };
+    if (query.sort) {
+      params['sort'] = query.sort;
+    }
     const data = await this.wordService.findAll(params)
-    const result = {code: 200, data: data[0], currentPage: parseInt(query.currentPage), pageSize: parseInt(query.pageSize), total: data[1]}
+    const result = { code: 200, data: data[0], currentPage: params.currentPage, pageSize: params.pageSize, total: data[1] }
     return result;
   }
 

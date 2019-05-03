@@ -1,5 +1,13 @@
-export interface List {
-    currentPage: number;
-    pageSize: number;
-    total: number;
+import { IsNotEmpty, IsString } from "class-validator";
+
+export class ListDto {
+    @IsNotEmpty()
+    @IsString()
+    currentPage: string;
+
+    @IsNotEmpty()
+    @IsString()
+    pageSize: string;
+    search?: string | string[];
+    sort?: 'ASC' | 'DESC';
 }
