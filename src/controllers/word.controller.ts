@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Put, Query, Delete, Param, Res, HttpStatus } from '@nestjs/common';
 import { WordService } from '../services/word.service';
 import { ListDto } from '../dto/index';
-import { Response } from 'express';
+import { Response, response } from 'express';
 
 @Controller('api/word')
 export class WordController {
@@ -25,8 +25,14 @@ export class WordController {
   }
 
   @Post()
-  save(@Body() params: any): any {
-    return this.wordService.save(params);
+  save(@Body() params: any, @Res() res: Response): any {
+    this.wordService.save(params)
+      .then(data => {
+        res.status(HttpStatus.CREATED).send({code: 200, data: data})
+      })
+      .catch(err => {
+        res.status(HttpStatus.FORBIDDEN).send({code: 403, data: err})
+      })
   }
 
   @Put()

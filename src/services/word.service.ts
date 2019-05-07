@@ -15,6 +15,8 @@ export class WordService {
    * @param data 新单词
    */
   async save(data: any): Promise<any> {
+    const word = await this.wordRepository.find({word: data.word});
+    if (word.length) return new Promise((resolve, reject) => {reject('已经存在')})
     return await this.wordRepository.save(data);
   }
 
