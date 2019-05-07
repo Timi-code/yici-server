@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Put, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Query, Delete, Param, Res, HttpStatus } from '@nestjs/common';
 import { WordService } from '../services/word.service';
 import { ListDto } from '../dto/index';
+import { Response } from 'express';
 
 @Controller('api/word')
 export class WordController {
@@ -25,13 +26,26 @@ export class WordController {
 
   @Post()
   save(@Body() params: any): any {
-    console.log(params);
     return this.wordService.save(params);
   }
 
   @Put()
   update(@Body() params: any): any {
-    console.log('更新单词', params);
     return this.wordService.update(params);
+  }
+
+  @Delete('/:id')
+  delete(@Param('id') id: string, @Res() res: Response): any {
+    this.wordService.deleteWord(id)
+      .then(data => {
+        if (data.affected) {
+          res.status(HttpStatus.OK).send({code: 200, data: 'success'})
+        } else {
+          res.status(HttpStatus.EXPECTATION_FAILED).send({code: 417, data: 'failed'})
+        }
+      })
+      .catch(err => {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({code: 500, data: err})
+      })
   }
 }

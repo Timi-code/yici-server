@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindManyOptions } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Word } from './../entities/word.entity';
 
 @Injectable()
@@ -39,5 +39,13 @@ export class WordService {
                                     .take(params.pageSize)
                                     .getManyAndCount();
     // return await this.wordRepository.findAndCount(param);
+  }
+
+  /**
+   * 删除单词
+   * @param id 删除实例的id
+   */
+  async deleteWord(id: string | number): Promise<any> {
+    return await this.wordRepository.delete(id)
   }
 }
